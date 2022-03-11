@@ -1,7 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Новости</title>
+    <link rel="stylesheet" href="form.css">
+</head>
 <?php
+
+function quote($var){
+    return trim($var);
+}
+function Auth()
+{
+    if(isset($_SESSION["id"])) header('Location: ./index.php?w=show_news');
+    ?>
+    <div class="container">
+    <form action="index.php?w=login" method="post">
+    <p>login: <input type="text" name="login"></p>
+    <p>password: <input type="password" name="password"></p>
+    <input type="submit" value="Войти">
+    </form>
+    </div>
+    <?php
+}
+function Login()
+{
+    $login = quote($_REQUEST["login"]);
+    $passwd = MD5(quote($_REQUEST["password"]));
+    $query = $GLOBALS["users"]->prepare("SELECT * FROM users WHERE `login`='$login' AND `passwd`='$passwd'");
+    $query->execute();
+    $result = $query->get_result();
+    $row = $result->fetch_assoc();
+    if(mysqli_num_rows($result) > 0)
+    {
+        $_SESSION["id"]=$row["id"];
+        header('Location:./index.php?w=show_news');
+    }
+    else 
+    {
+        $_SESSION['message'] = "Неверный логин или пароль";
+    }
+}
+function Logout()
+{
+    session_destroy();
+    header('Location:./index.php?w=auth');
+}
+function Check()
+{
+    ?>
+    <?php
+    if(!isset($_SESSION["id"]))
+    {
+       header('Location:./index.php?w=auth');
+    }
+    ?>
+    <?php
+}
 function ShowAllNews()
 {
-    $result = $GLOBALS["mysqli"]->query('SELECT * FROM news ORDER BY data DESC LIMIT 10'); // запрос на выборку
+    $query = $GLOBALS["mysqli"]->prepare("SELECT * FROM news ORDER BY data DESC LIMIT 10");
+    $query->execute();
+
+    $result = $query->get_result();  // запрос на выборку
     ?>
     <div class="container">
         <ul class="news">
@@ -29,11 +90,11 @@ function ShowAllNews()
                             <input type="hidden" name="preview" value="<?=$row["preview"] ?>">
                             <input type="hidden" name="text" value="<?=$row["text"] ?>">
                             <input type="hidden" name="edit" value="<?=$row["id"] ?>">
-                            <input type="submit" value="Редактировать">
+                            <input class="edit" type="submit" value="Редактировать">
                         </form>
                         <form action="index.php?w=delete" method="post">
                             <input type="hidden" name="delete" value="<?=$row["id"] ?>">
-                            <input type="submit" value="Удалить">
+                            <input class="delete" type="submit" value="Удалить">
                         </form>
                     </div>
     </li>
@@ -47,34 +108,80 @@ function ShowAllNews()
 ?>
 
 <?php
+function SaveFile()
+{
+    if (isset($_FILES['uploadedFile']) && $_FILES['uploadedFile']['error'] === UPLOAD_ERR_OK)
+    {
+        
+        //// get details of the uploaded file
+        $fileTmpPath = $_FILES['uploadedFile']['tmp_name'];
+        $fileName = $_FILES['uploadedFile']['name'];
+        $fileSize = $_FILES['uploadedFile']['size'];
+        $fileType = $_FILES['uploadedFile']['type'];
+        $fileNameCmps = explode(".", $fileName);
+        $fileExtension = strtolower(end($fileNameCmps));
+        
+        // sanitize file-name
+        $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+        
+        // check if file has one of the following extensions
+        $allowedfileExtensions = array('jpg', 'gif', 'png');
+        
+        if (in_array($fileExtension, $allowedfileExtensions))
+        {
+          // directory in which the uploaded file will be moved
+          $uploadFileDir = './uploaded_files/';
+          $dest_path = $uploadFileDir . $newFileName;
+          $filename= $dest_path;
+          if(move_uploaded_file($fileTmpPath, $dest_path)) 
+          {
+            $message ='File is successfully uploaded.';
+            return $dest_path;
+          }
+          else 
+          {
+            $message = 'There was some error moving the file to upload directory. Please make sure the upload directory is writable by web server.';
+          }  
+         }
+    }
+}
 function SaveNewsInDB()
 {
+    $filename=SaveFile();
     $saveNews = $GLOBALS["mysqli"]->prepare("INSERT INTO news (data, title, preview, text, image) VALUES (?, ?, ?, ?, ?)");
     $data = date("Y-m-d H:i:s");
     $title = $_REQUEST["title"];
     $preview = $_REQUEST["preview"];
     $text = $_REQUEST["text"];
-    $image = $_REQUEST["image"];	
+    $image = $filename;	
     $saveNews->bind_param('sssss', $data, $title, $preview, $text, $image);
-    if ($saveNews->execute()) {
+    if ($saveNews->execute())
+    {
         echo'';
-    } else {
+    } 
+    else
+    {
         echo'';
     }
-}
+    header('Location:./index.php?w=show_news');
+} 
 ?>
 
 <?php
 function AddNews()
 {
+    Check();
     ?>
     <div class="container">
-    <form action="index.php?w=save" method="post">
-        <p>Заголовок: <input type="text" name="title"></p>
-        <p>Анонс: <input type="text" name="preview"></p>
+    <form id = "add_form" action="index.php?w=save" method="post" enctype="multipart/form-data">
+        <p>Заголовок: <input class="title" type="text" name="title"></p>
+        <p>Анонс: <textarea class="preview" type="text" name="preview"></textarea></p>
         <p>Полный текст:<br>
-            <textarea type="text" name="text"></textarea></p>
-        <p>Изображение: <input type="text" name="image"></p>
+            <textarea class="fullText" type="text" name="text"></textarea></p>
+        <div>
+            <span>Upload a File:</span>
+            <input type="file" name="uploadedFile" />
+        </div>
         <p><input type="submit"></p>
     </form>
 </div>
@@ -94,6 +201,7 @@ function DeleteNewsFromDB()
     } else {
         echo'';
     }
+    header('Location:./index.php?w=show_news');
 }
 ?>
 
@@ -131,32 +239,37 @@ function EditNews()
 {
     ?>
     <div class="container">
-    <form action="index.php?w=save_edit" method="post">
-        <p>Заголовок: <input type="text" name="newTitle" value="<?=$_REQUEST["title"]?>"></p>
-        <p>Анонс: <input type="text" name="newpreview" value="<?=$_REQUEST["preview"]?>"></p>
-        <p>Полный текст: <textarea type="text" name="newText"><?=$_REQUEST["text"]?></textarea></p>
-        <p>Изображение: <input type="text" name="newimage" value="<?=$_REQUEST["image"]?>"></p>
+    <form action="index.php?w=save_edit" method="post" enctype="multipart/form-data">
+        <p>Заголовок: <input class="title" type="text" name="newTitle" value="<?=$_REQUEST["title"]?>"></p>
+        <p>Анонс: <textarea class="preview" type="text" name="newpreview"><?=$_REQUEST["preview"]?></textarea></p>
+        <p>Полный текст: <textarea class="fullText" type="text" name="newText"><?=$_REQUEST["text"]?></textarea></p>
+        <div>
+            <span>Upload a File:</span>
+            <input type="file" name="uploadedFile" />
+        </div>
         <input type="hidden" name="edit" value="<?=$_REQUEST["edit"] ?>">
         <p><input type="submit"></p>
     </form>
-</div>
+    </div>
     <?php
 }
 ?>
 <?php
 function SaveNews()
 {
+    $filename=SaveFile();
     $editNews = $GLOBALS["mysqli"]->prepare("UPDATE news SET data = ?, title = ?, preview = ?, text = ?, image = ? WHERE id = ?");
     $edit = $_REQUEST["edit"];
     $data = date("Y-m-d H:i:s");
     $newTitle = $_REQUEST["newTitle"];
     $newpreview = $_REQUEST["newpreview"];
     $newText = $_REQUEST["newText"];
-    $newimage = $_REQUEST["newimage"];
+    $newimage = $filename;
     $editNews->bind_param('sssssi', $data, $newTitle, $newpreview, $newText, $newimage, $edit);
     if ($editNews->execute()) {
         echo '';
     } else {
         echo '';
     }
+    header('Location:./index.php?w=show_news');
 }?>
