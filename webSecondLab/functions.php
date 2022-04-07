@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Новости</title>
     <link rel="stylesheet" href="form.css">
+    <link rel="stylesheet" href="slider.css">
 </head>
 <?php
 
@@ -65,6 +66,57 @@ function ShowAllNews()
     $result = $query->get_result();  // запрос на выборку
     ?>
     <div class="container">
+
+        <div id="block-for-slider">
+            <div id="viewport">
+            <ul id="slidewrapper">
+                <?php
+                $i=0;
+                while ($i < 3 and $row = $result->fetch_assoc())
+                {
+                    $i++;
+                    ?>
+                    <li class="slide" id="<?=$row["id"]?>">
+                        <img src="<?=$row["image"]?>" alt="<?=$i?>" class="slide-img">
+                        <form action="index.php?w=fullText" method="post">
+                            <input type="hidden" name="fullText" value="<?=$row['id'] ?>">
+                            <a href="#" onclick="parentNode.submit();"><?=$row["title"] ?></a>
+                        </form>
+                        <div class="slider-preview">
+                            <p><?=$row["preview"] ?></p>
+                        </div>
+                        <form action="index.php?w=edit" method="post">
+                            <input type="hidden" name="title" value="<?=$row["title"] ?>">
+                            <input type="hidden" name="image" value="<?=$row["image"] ?>">
+                            <input type="hidden" name="preview" value="<?=$row["preview"] ?>">
+                            <input type="hidden" name="text" value="<?=$row["text"] ?>">
+                            <input type="hidden" name="edit" value="<?=$row["id"] ?>">
+                            <input class="edit" type="submit" value="Редактировать">
+                        </form>
+                        <form action="index.php?w=delete" method="post">
+                            <input type="hidden" name="delete" value="<?=$row["id"] ?>">
+                            <input class="delete" type="submit" value="Удалить">
+                        </form>
+                    </li>
+                <?php
+                }
+                ?>
+                </ul>
+                <div class="nav-btns">
+                    <ul id="nav-btns">
+                        <?php
+                        $j=0;
+                        while($j++ < $i)
+                        {
+                            ?>
+                            <li class="slide-nav-btn"></li>
+                            <?php
+                        }
+                        ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <ul class="news">
         <?php
     while($row = $result->fetch_assoc())// получаем все строки в цикле по одной
@@ -103,6 +155,10 @@ function ShowAllNews()
     ?>
     </ul>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./script.js"></script>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <?php
 }
 ?>
