@@ -19,6 +19,12 @@ input.delete {
     float:right
 }
 #form {
-display: inline-block;
+display: block;
 text-align: center;
+
+}
+#auth{
+    display: grid;
+    align-items: center;
+    text-align: center;
 }

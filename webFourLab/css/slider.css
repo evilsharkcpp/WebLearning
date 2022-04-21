@@ -1,13 +1,18 @@
-#block-for-slider {
-    width: 800px;
-    margin: 0 auto;
-    top:0;
-}
-
-#viewport {
+#slidewrapper li {
     width: 100%;
-    display: table;
+    list-style: none;
+    display: flex;
+    flex-shrink: 0;
+    float: left;
     position: relative;
+}
+#viewport{
+    display: flex;
+    width: calc(100%);
+    margin: 0;
+    padding: 0;
+    left: 0;
+    background-size: cover;
     overflow: hidden;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -17,7 +22,14 @@
 }
 
 #slidewrapper {
-    width: calc(100% * 4);
+    position: relative;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    display: flex;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: calc(200%);
     -webkit-transition: 1s;
     -o-transition: 1s;
     transition: 1s;
@@ -25,67 +37,32 @@
     -o-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
 }
-
-#slidewrapper ul, #slidewrapper li {
-    margin: 0;
-    padding: 0;
-}
-
-#slidewrapper li {
-    width: calc(100%/4);
-    list-style: none;
-    display: inline;
-    float: left;
-    position: relative;
-}
-
 .card.mb-4{
-    height: 800px;
-    width: 800px;
-    /* display: block; */
-    /* justify-content: center; */
-    
-/* padding-right: 0; *//* max-width: 800px; */}
-.slider-preview{
-    position: relative;
-    left: 70%;
-    top: -20px;
-    max-width: 50%;
-    max-height: 500px;
-    margin-left: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
-    margin-right: 5px;
-    overflow: hidden;
+    width: -webkit-fill-available;
+    display: flex;
+    flex-shrink: 0;
+    min-width: none;
 }
-.slider-preview p{
-    text-align: justify;
-}
-.slide-img {
-    width: 70%;
-    margin-right: 50px;
-    height: 500px;
-    object-fit: cover;
-}
-
 #nav-btns {
-    width: 100%;
-    /* height: 0px; */
-    top: 200px;
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    flex-shrink: 1;
+    left: 0;
     padding: 0;
-    padding-bottom: 100px;
+    margin: auto;
+    max-width: fit-content;
+    top:-10px;
     text-align: center;
 }
-.nav-btns{
-    bottom: 0;
-}
+
 .slide-nav-btn {
     position: relative;
-    display: inline-block;
+    display: flex;
     list-style: none;
     width: 20px;
     height: 20px;
-    background-color: rgb(44, 44, 44);
+    background-color: rgb(44, 42, 42);
     border-radius: 50%;
     margin: 3px;
 }
@@ -98,3 +75,6 @@
     color: white;
 }
 
+.slide a {
+    text-decoration: none;
+}

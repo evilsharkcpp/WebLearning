@@ -40,7 +40,7 @@ if(array_key_exists("auth", $_GET))
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Blog Home - Start Bootstrap Template</title>
+        <title>EvilShark news</title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Core theme CSS (includes Bootstrap)-->
@@ -56,7 +56,7 @@ if(array_key_exists("auth", $_GET))
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">News</a></li>
+                        <li class="nav-item"><a class="nav-link" href="page.php?page=1">News</a></li>
                         <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="index.php?w=add">Add News</a></li>
                         <li class="nav-item"><a class="nav-link" href="auth.php?auth=exit">Logout</a></li>
@@ -66,12 +66,6 @@ if(array_key_exists("auth", $_GET))
         </nav>
         <!-- Page header with logo and tagline-->
         <header class="py-5 bg-light border-bottom mb-4">
-            <div class="container">
-                <div class="text-center my-5">
-                    <h1 class="fw-bolder">Welcome to Blog Home!</h1>
-                    <p class="lead mb-0">A Bootstrap 5 starter layout for your next blog homepage</p>
-                </div>
-            </div>
         </header>
         <?php
         if(array_key_exists("w", $_GET))
@@ -79,6 +73,9 @@ if(array_key_exists("auth", $_GET))
             $w = $_GET["w"];
             switch($w)
             {
+                case "save_edit":
+                    SaveNews();
+                    break;
                 case "save":
                     SaveNewsInDB();
                     break;
@@ -98,9 +95,7 @@ if(array_key_exists("auth", $_GET))
         ?>
         <!-- Page content-->
         <div class="container">
-            <div class="row">
-                <!-- Blog entries-->
-                <div class="col-lg-8">
+        <div class="col-lg-8">
                     <!-- Featured blog post-->
                     <div id="block-for-slider">
                     <div id="viewport">
@@ -143,7 +138,9 @@ if(array_key_exists("auth", $_GET))
                                 }?>
                     </ul>
                     
-                        <ul id="nav-btns">
+                        
+                    </div>
+                    <ul id="nav-btns">
                             <?php
                             $j=0;
                             while($j++ < $i)
@@ -154,7 +151,9 @@ if(array_key_exists("auth", $_GET))
                             }
                             ?>
                         </ul>
-                    </div>
+            <div class="row">
+                <!-- Blog entries-->
+                
                     </div>
                     <!-- Nested row for non-featured blog posts-->
                     <div class="row">
@@ -199,24 +198,6 @@ if(array_key_exists("auth", $_GET))
                         }
                         ?>
                     </div>
-                    <!-- Pagination-->
-                    <nav aria-label="Pagination">
-                        <hr class="my-0" />
-                        <ul class="pagination justify-content-center my-4">
-                            <?php
-                            $res = $GLOBALS["mysqli"]->query("SELECT count(*) FROM news");
-                            $row = $res->fetch_row();
-                            $total = $row[0]/4;
-                            $i=0;
-                            while ($i++ < $total)
-                            {
-                                ?>
-                                <li class="page-item" aria-current="page"><a class="page-link" href="page.php?page=<?=$i?>"><?=$i?></a></li>
-                            <?php
-                            }
-                            ?>
-                        </ul>
-                    </nav>
                 </div>
             </div>
         </div>

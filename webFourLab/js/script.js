@@ -61,5 +61,7 @@ $(document).ready(function () {
             });
             slideNow = navBtnId + 1;
         }
+        clearInterval(switchInterval);
+        switchInterval = setInterval(nextSlide, slideInterval);
     });
 });

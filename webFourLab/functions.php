@@ -210,14 +210,13 @@ function SaveNewsInDB()
     {
         echo'';
     }
-    header('Location:./index.php?w=show_news');
+    header('Location:./index.php');
 } 
 ?>
 
 <?php
 function AddNews()
 {
-    Check();
     ?>
     <div class="container">
     <form id = "add_form" action="index.php?w=save" method="post" enctype="multipart/form-data">
@@ -292,7 +291,8 @@ function EditNews()
         <p>Полный текст: <textarea class="fullText" type="text" name="newText"><?=$_REQUEST["text"]?></textarea></p>
         <div>
             <span>Upload a File:</span>
-            <input type="file" name="uploadedFile" />
+            <input type="file" name="uploadedFile" value =<?=$_REQUEST["image"]?> />
+            <input type="hidden" name="file" value="<?=$_REQUEST["image"] ?>">
         </div>
         <input type="hidden" name="edit" value="<?=$_REQUEST["edit"] ?>">
         <p><input type="submit"></p>
@@ -304,7 +304,16 @@ function EditNews()
 <?php
 function SaveNews()
 {
-    $filename=SaveFile();
+    $filename="";
+    if (isset($_FILES['uploadedFile']))
+    {
+        $filename=$_REQUEST['file'];
+        if($filename=="") $filename=SaveFile();
+    }
+    else
+    {
+        $filename=SaveFile();
+    }
     $editNews = $GLOBALS["mysqli"]->prepare("UPDATE news SET data = ?, title = ?, preview = ?, text = ?, image = ? WHERE id = ?");
     $edit = $_REQUEST["edit"];
     $data = date("Y-m-d H:i:s");
@@ -318,5 +327,5 @@ function SaveNews()
     } else {
         echo '';
     }
-    header('Location:./index.php?w=show_news');
+    header('Location:./index.php');
 }?>
