@@ -1,0 +1,87 @@
+#slidewrapper li {
+    width: 100%;
+    list-style: none;
+    display: flex;
+    flex-shrink: 0;
+    float: left;
+    position: relative;
+}
+#viewport{
+    display: flex;
+    width: calc(100%);
+    margin: 0;
+    padding: 0;
+    left: 0;
+    background-size: cover;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+#slidewrapper {
+    position: relative;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    display: flex;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: calc(200%);
+    -webkit-transition: 1s;
+    -o-transition: 1s;
+    transition: 1s;
+    -webkit-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+}
+.card.mb-4{
+    width: -webkit-fill-available;
+    display: flex;
+    flex-shrink: 0;
+    min-width: none;
+}
+#nav-btns {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    flex-shrink: 1;
+    left: 0;
+    padding: 0;
+    margin: auto;
+    max-width: fit-content;
+    top:-10px;
+    text-align: center;
+}
+
+.slide-nav-btn {
+    position: relative;
+    display: flex;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background-color: rgb(44, 42, 42);
+    border-radius: 50%;
+    margin: 3px;
+}
+
+.slide-nav-btn:hover {
+    cursor: pointer;
+}
+
+.slide a:visited {
+    color: white;
+}
+
+.slide a {
+    text-decoration: none;
+}
+.page-numbers {
+    padding: 1% 2%;
+    box-shadow: 0 0 10px #ccc;
+    margin: 0 1% 0 0;
+    background: #fff;
+    border-radius: 3px;
+    }

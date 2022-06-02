@@ -1,0 +1,30 @@
+input.title
+{
+    width:75%;
+}
+textarea.preview {
+    min-height:100px;
+    min-width:400px;
+    resize:none
+}
+textarea.fullText {
+    min-width:400px;
+    min-height:300px;
+    resize:none
+}
+input.edit {
+    float: right
+}
+input.delete {
+    float:right
+}
+#form {
+display: block;
+text-align: center;
+
+}
+#auth{
+    display: grid;
+    align-items: center;
+    text-align: center;
+}
